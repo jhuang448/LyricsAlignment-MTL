@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchaudio
+import warnings
 
 from utils import notes_to_pc
 
@@ -10,9 +11,11 @@ sr = 22050
 n_fft = 512
 resolution = 256/22050*3
 
-train_audio_transforms = nn.Sequential(
-    torchaudio.transforms.MelSpectrogram(sample_rate=sr, n_mels=128, n_fft=n_fft),
-)
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    train_audio_transforms = nn.Sequential(
+        torchaudio.transforms.MelSpectrogram(sample_rate=sr, n_mels=128, n_fft=n_fft),
+    )
 
 def data_processing(data):
     spectrograms = []
@@ -180,3 +183,54 @@ class MultiTaskLossWrapper(nn.Module):
         loss_melody = self.criterion_melody(y_melody, melody_gt)
 
         return loss_lyrics, loss_melody
+
+
+class BoundaryDetection(nn.Module):
+
+    def __init__(self, n_cnn_layers, rnn_dim, n_class, n_feats, stride=1, dropout=0.1):
+        super(BoundaryDetection, self).__init__()
+
+        self.n_class = n_class
+
+        # n residual cnn layers with filter size of 32
+        self.cnn_layers = nn.Sequential(
+            nn.Conv2d(1, n_feats, 3, stride=stride, padding=3 // 2),
+            nn.ReLU()
+        )
+
+        self.rescnn_layers = nn.Sequential(*[
+            ResidualCNN(n_feats, n_feats, kernel=3, stride=1, dropout=dropout, n_feats=128)
+            for _ in range(n_cnn_layers)
+        ])
+
+        self.maxpooling = nn.MaxPool2d(kernel_size=(2, 3))
+        self.fully_connected = nn.Linear(n_feats * 64, rnn_dim) # add a linear layer
+
+        self.bilstm_layers = nn.Sequential(
+            BidirectionalLSTM(rnn_dim=rnn_dim, hidden_size=rnn_dim, dropout=dropout, batch_first=True),
+            BidirectionalLSTM(rnn_dim=rnn_dim * 2, hidden_size=rnn_dim, dropout=dropout, batch_first=False),
+            BidirectionalLSTM(rnn_dim=rnn_dim * 2, hidden_size=rnn_dim, dropout=dropout, batch_first=False)
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Linear(rnn_dim * 2, n_class)  # birnn returns rnn_dim*2
+        )
+
+    def forward(self, x):
+        x = self.cnn_layers(x)
+        x = self.rescnn_layers(x)
+        x = self.maxpooling(x)
+
+        sizes = x.size()
+        x = x.view(sizes[0], sizes[1] * sizes[2], sizes[3])  # (batch, feature, time)
+        x = x.transpose(1, 2)  # (batch, time, feature)
+        x = self.fully_connected(x)
+
+        x = self.bilstm_layers(x)
+
+        x = self.classifier(x)
+        x = x.view(sizes[0], sizes[3], self.n_class)
+
+        x = torch.sigmoid(x)
+
+        return x

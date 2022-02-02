@@ -157,7 +157,7 @@ class LyricsAlignDataset(Dataset):
                 print("Adding audio files to dataset (preprocessing)...")
                 for idx, example in enumerate(tqdm(dataset[partition])):
                     # Load song
-                    y, _ = load(example["vocal_path"].replace("audio_umx_44100", "audio_spleeter"), sr=self.sr, mono=True)
+                    y, _ = load(example["vocal_path"], sr=self.sr, mono=True)
 
                     # Add to HDF5 file
                     grp = f.create_group(str(idx))
@@ -206,7 +206,7 @@ class LyricsAlignDataset(Dataset):
         with h5py.File(self.hdf_file, "r", libver='latest', swmr=True) as f:
             if f.attrs["sr"] != sr:
                 raise ValueError(
-                    "Tried to load existing HDF file, but sampling rate is not as expected. Did you load an out-dated HDF file?")
+                    "Tried to load existing HDF file, but sampling rate is not as expected.")
 
         # Go through HDF and collect lengths of all audio files
         with h5py.File(self.hdf_file, "r") as f:
@@ -222,7 +222,7 @@ class LyricsAlignDataset(Dataset):
 
     def __getitem__(self, index):
 
-        # Open HDF5
+        # open HDF5
         if self.hdf_dataset is None:
             driver = "core" if self.in_memory else None  # Load HDF5 fully into memory if desired
             self.hdf_dataset = h5py.File(self.hdf_file, 'r', driver=driver)
@@ -387,8 +387,8 @@ class JamendoLyricsDataset(Dataset):
                     # load audio
                     y, _ = load(os.path.join(audio_dir, audio_name[:-4] + "_vocals.mp3"), sr=self.sr, mono=True)
 
-                    lyrics, words, idx_in_full, idx_line = load_lyrics(os.path.join(lyrics_dir, audio_name[:-4]))
-                    lyrics_p, words_p, idx_in_full_p = gen_phone_gt(words)
+                    lyrics, words, idx_in_full, idx_line, raw_lines = load_lyrics(os.path.join(lyrics_dir, audio_name[:-4]))
+                    lyrics_p, words_p, idx_in_full_p, idx_line_p = gen_phone_gt(words, raw_lines)
 
                     print(audio_name)
                     annot_num = len(words)
@@ -400,7 +400,7 @@ class JamendoLyricsDataset(Dataset):
 
                     grp.attrs["input_length"] = y.shape[1]
                     grp.attrs["audio_name"] = audio_name[:-4]
-                    print(len(lyrics))
+                    # print(len(lyrics))
 
                     grp.create_dataset("lyrics", shape=(1, 1), dtype='S3000', data=np.array([lyrics.encode()]))
                     grp.create_dataset("idx", shape=(annot_num, 2), dtype=np.int, data=idx_in_full)
@@ -409,19 +409,20 @@ class JamendoLyricsDataset(Dataset):
                     grp.create_dataset("lyrics_p", shape=(len(lyrics_p), 1), dtype='S2',
                                        data=np.array([l_p.encode() for l_p in lyrics_p]))
                     grp.create_dataset("idx_p", shape=(annot_num, 2), dtype=np.int, data=idx_in_full_p)
+                    grp.create_dataset("idx_line_p", shape=(line_num, 2), dtype=np.int, data=idx_line_p)
 
         # In that case, check whether sr and channels are complying with the audio in the HDF file, otherwise raise error
         with h5py.File(self.hdf_file, "r", libver='latest', swmr=True) as f:
             if f.attrs["sr"] != sr:
                 raise ValueError(
-                    "Tried to load existing HDF file, but sampling rate is not as expected. Did you load an out-dated HDF file?")
+                    "Tried to load existing HDF file, but sampling rate is not as expected.")
 
         with h5py.File(self.hdf_file, "r") as f:
             self.length = len(f) # number of songs
 
     def __getitem__(self, index):
 
-        # Open HDF5
+        # open HDF5
         if self.hdf_dataset is None:
             driver = "core" if self.in_memory else None
             self.hdf_dataset = h5py.File(self.hdf_file, 'r', driver=driver)
@@ -434,14 +435,18 @@ class JamendoLyricsDataset(Dataset):
         if self.unit == 'phone': # load phonemes
             lyrics = self.hdf_dataset[str(index)]["lyrics_p"][:, 0]
             lyrics = [l.decode() for l in lyrics]
-            align_idx = self.hdf_dataset[str(index)]["idx_p"]
+            word_idx = self.hdf_dataset[str(index)]["idx_p"]
+            line_idx = self.hdf_dataset[str(index)]["idx_line_p"][:]
         else: # load characters
             lyrics = self.hdf_dataset[str(index)]["lyrics"][0, 0].decode()
-            align_idx = self.hdf_dataset[str(index)]["idx"]
+            word_idx = self.hdf_dataset[str(index)]["idx"]
+            line_idx = None
 
         chunks = [audio]
 
-        return chunks, align_idx, (lyrics, audio_name, audio_length)
+        # audio, (indices of the first characters/phonemes of the words, * of the lines),
+        # (lyrics in characters/phonemes, song names, audio length in samples)
+        return chunks, (word_idx, line_idx), (lyrics, audio_name, audio_length)
 
     def __len__(self):
         return self.length
