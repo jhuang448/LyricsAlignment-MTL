@@ -2,7 +2,7 @@
 
 This repository consists of code of the following paper:
 
-Jiawen Huang, Emmanouil Benetos, Sebastian Ewert, "Improving Lyrics Alignment through Joint Pitch Detection," 
+Jiawen Huang, Emmanouil Benetos, Sebastian Ewert, "**Improving Lyrics Alignment through Joint Pitch Detection**," 
 International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022.
 
 ## Dependencies
@@ -80,13 +80,13 @@ The generated csv files under `pred_dir` can be easily evaluated using the evalu
 
 ## References
 
-[1] Yun-Ning Hung, Yi-An Chen, and Yi-Hsuan Yang, “Multi- task learning for frame-level instrument recognition,” in Proc. ICASSP. 2019, pp. 381–385, IEEE.
+[1] Yun-Ning Hung, Yi-An Chen, and Yi-Hsuan Yang, “Multi-task learning for frame-level instrument recognition,” in Proc. ICASSP. 2019, pp. 381–385, IEEE.
 
-[2] Sebastian Ewert, Meinard Mu ̈ller, and Peter Grosche, “High resolution audio synchronization using chroma onset features,” in Proc. ICASSP. 2009, pp. 1869–1872, IEEE.
+[2] Sebastian Ewert, Meinard Müller, and Peter Grosche, “High resolution audio synchronization using chroma onset features,” in Proc. ICASSP. 2009, pp. 1869–1872, IEEE.
 
-[3] Daniel Stoller, Simon Durand, and Sebastian Ewert, “End- to-end lyrics alignment for polyphonic music using an audio- to-character recognition model,” in Proc. ICASSP. 2019, pp. 181–185, IEEE.
+[3] Daniel Stoller, Simon Durand, and Sebastian Ewert, “End-to-end lyrics alignment for polyphonic music using an audio-to-character recognition model,” in Proc. ICASSP. 2019, pp. 181–185, IEEE.
 
-[4] GabrielMeseguer-Brocal,AliceCohen-Hadria,andGeoffroy Peeters, “Creating DALI, a large dataset of synchronized audio, lyrics, and notes,” Transactions of the International Society for Music Information Retrieval, vol. 3, no. 1, pp. 55–67, 2020.
+[4] Gabriel Meseguer-Brocal, Alice Cohen-Hadria, and Geoffroy Peeters, “Creating DALI, a large dataset of synchronized audio, lyrics, and notes,” Transactions of the International Society for Music Information Retrieval, vol. 3, no. 1, pp. 55–67, 2020.
 
 [5] Chitralekha Gupta, Emre Yılmaz, and Haizhou Li, “Automatic lyrics alignment and transcription in polyphonic music: Does background music help?,” in Proc. ICASSP. 2020, pp. 496–500, IEEE.
 
