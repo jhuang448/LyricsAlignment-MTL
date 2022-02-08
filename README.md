@@ -3,7 +3,7 @@
 This repository consists of code of the following paper:
 
 Jiawen Huang, Emmanouil Benetos, Sebastian Ewert, "**Improving Lyrics Alignment through Joint Pitch Detection**," 
-International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022.
+International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022. [https://arxiv.org/abs/2202.01646](https://arxiv.org/abs/2202.01646)
 
 ## Dependencies
 
