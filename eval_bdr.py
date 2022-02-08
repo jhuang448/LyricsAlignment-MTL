@@ -60,7 +60,7 @@ def main(args):
     ac_state = utils.load_model(ac_model, args.ac_model, args.cuda)
     bdr_state = utils.load_model(bdr_model, args.bdr_model, args.cuda)
 
-    test_data = JamendoLyricsDataset(args.sr, args.hdf_dir, args.dataset, args.jamendo_dir, unit=args.unit)
+    test_data = JamendoLyricsDataset(args.sr, args.hdf_dir, args.dataset, args.jamendo_dir, args.sepa_dir, unit=args.unit)
 
     # predict with boundary detection
     results = test.predict_w_bdr(args, ac_model, bdr_model, test_data, device,
@@ -77,6 +77,8 @@ if __name__ == '__main__':
                         help='Number of feature channels per layer')
     parser.add_argument('--jamendo_dir', type=str, required=True,
                         help='Dataset path')
+    parser.add_argument('--sepa_dir', type=str, required=True,
+                        help='Where all the separated vocals of Jamendo are stored.')
     parser.add_argument('--dataset', type=str, default="jamendo",
                         help='Dataset name')
     parser.add_argument('--hdf_dir', type=str, default="./hdf/",

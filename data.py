@@ -358,7 +358,7 @@ class LyricsAlignDataset(Dataset):
         return self.length
 
 class JamendoLyricsDataset(Dataset):
-    def __init__(self, sr, hdf_dir, dataset, jamendo_dir, in_memory=False, unit='phone'):
+    def __init__(self, sr, hdf_dir, dataset, jamendo_dir, audio_dir, in_memory=False, unit='phone'):
         super(JamendoLyricsDataset, self).__init__()
         self.hdf_dataset = None
         os.makedirs(hdf_dir, exist_ok=True)
@@ -368,7 +368,6 @@ class JamendoLyricsDataset(Dataset):
         self.in_memory = in_memory
         self.unit=unit
 
-        audio_dir = os.path.join(jamendo_dir, 'sepa')
         lyrics_dir = os.path.join(jamendo_dir, 'lyrics')
         self.audio_list = [file for file in os.listdir(os.path.join(jamendo_dir, 'mp3')) if file.endswith('.mp3')]
 
