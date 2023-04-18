@@ -90,6 +90,22 @@ The generated csv files under `pred_dir` can be easily evaluated using the evalu
 
 [5] Chitralekha Gupta, Emre Yılmaz, and Haizhou Li, “Automatic lyrics alignment and transcription in polyphonic music: Does background music help?,” in Proc. ICASSP. 2020, pp. 496–500, IEEE.
 
+## Cite this work
+
+```
+@inproceedings{jhuang_icassp2022,
+  author       = {Jiawen Huang and
+                  Emmanouil Benetos and
+                  Sebastian Ewert},
+  title        = {Improving Lyrics Alignment Through Joint Pitch Detection},
+  booktitle    = {{IEEE} International Conference on Acoustics, Speech and Signal Processing,
+                  {ICASSP} 2022, Virtual and Singapore, 23-27 May 2022},
+  pages        = {451--455},
+  publisher    = {{IEEE}},
+  year         = {2022}
+}
+```
+
 
 ## Contact
 
