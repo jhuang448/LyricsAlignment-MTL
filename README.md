@@ -3,7 +3,7 @@
 This repository consists of code of the following paper:
 
 Jiawen Huang, Emmanouil Benetos, Sebastian Ewert, "**Improving Lyrics Alignment through Joint Pitch Detection**," 
-International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022. [https://arxiv.org/abs/2202.01646](https://arxiv.org/abs/2202.01646)
+International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022. [https://ieeexplore.ieee.org/document/9746460](https://ieeexplore.ieee.org/document/9746460)
 
 **A multilingual adaptation of the baseline method is available at [https://github.com/jhuang448/LyricsAlignment-Multilingual/](https://github.com/jhuang448/LyricsAlignment-Multilingual/). Please consider using that model as it performs better.**
 
