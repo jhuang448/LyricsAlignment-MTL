@@ -5,6 +5,8 @@ This repository consists of code of the following paper:
 Jiawen Huang, Emmanouil Benetos, Sebastian Ewert, "**Improving Lyrics Alignment through Joint Pitch Detection**," 
 International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2022. [https://arxiv.org/abs/2202.01646](https://arxiv.org/abs/2202.01646)
 
+**A multilingual adaptation of the baseline method is available at [https://github.com/jhuang448/LyricsAlignment-Multilingual/](https://github.com/jhuang448/LyricsAlignment-Multilingual/). Please consider using that model as it performs better.**
+
 ## Dependencies
 
 This repo is written in python 3. Pytorch is used as the deep learning framework. To install the required python packages, run
@@ -72,7 +74,7 @@ The following script runs alignment using the pretrained MTL model with boundary
 
 ```
 python eval_bdr.py --jamendo_dir=/path/to/jamendolyrics/ --sepa_dir=/path/to/separated/jamendo/mp3s/
-                   --load_model=./checkpoints/checkpoint_MTL --pred_dir=/where/to/save/predictions/
+                   --ac_model=./checkpoints/checkpoint_MTL --pred_dir=/where/to/save/predictions/
                    --bdr_model=./checkpoints/checkpoint_BDR --model=MTL
 ```
 
